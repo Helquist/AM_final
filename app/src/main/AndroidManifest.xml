@@ -16,7 +16,7 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.ndres.tflitedemo">
+    package="me.AM.tflitedemo">
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -38,7 +38,7 @@
             android:value="face" />
 
 
-        <activity android:name="me.ndres.tflitedemo.CameraActivity"
+        <activity android:name="me.AM.tflitedemo.CameraActivity"
                   android:screenOrientation="portrait"
                   android:label="@string/app_name">
             <intent-filter>

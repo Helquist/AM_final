@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package me.ndres.tflitedemo;
+package me.AM.tflitedemo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,7 +27,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -63,10 +62,6 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +77,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -733,9 +727,6 @@ public class Camera2BasicFragment extends Fragment
   /** Classifies a frame from the preview stream. */
   private void classifyFrame() {
     if (classifier == null || getActivity() == null || cameraDevice == null) {
-      // It's important to not call showToast every frame, or else the app will starve and
-      // hang. updateActiveModel() already puts a error message up with showToast.
-      // showToast("Uninitialized Classifier or invalid context.");
       return;
     }
     SpannableStringBuilder textToShow = new SpannableStringBuilder();
@@ -751,7 +742,7 @@ public class Camera2BasicFragment extends Fragment
       Rect rect = new Rect(Math.round(face.getPosition().x), Math.round(face.getPosition().y),
               Math.round(face.getWidth() + face.getPosition().x), Math.round(face.getPosition().y + face.getHeight()));
 
-    //  Be sure that there is at least 1px to slice.
+      //  Be sure that there is at least 1px to slice.
       assert(rect.left < rect.right && rect.top < rect.bottom);
       //  Create our resulting image (150--50),(75--25) = 200x100px
       Bitmap resultBmp = Bitmap.createBitmap(rect.right-rect.left, rect.bottom-rect.top, Bitmap.Config.ARGB_8888);
@@ -760,13 +751,11 @@ public class Camera2BasicFragment extends Fragment
 
       Bitmap resized = Bitmap.createScaledBitmap(resultBmp, 48, 48, true);
 
-      saveBitmap(resized, "preview.png");
       classifier.classifyFrame(resized, textToShow);
 
       Log.i(TAG, "faceid "+face.getPosition().x);
       Log.i(TAG, "faceid "+face.getPosition().y);
     }
-
 
     Log.i(TAG, "facelen "+ faces.size());
 
@@ -774,29 +763,6 @@ public class Camera2BasicFragment extends Fragment
     showToast(textToShow);
   }
 
-  public static void saveBitmap(final Bitmap bitmap, final String filename) {
-    final String root =
-            Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "tensorflow";
-    final File myDir = new File(root);
-
-    if (!myDir.mkdirs()) {
-      Log.i(TAG, "Make dir failed");
-    }
-
-    final String fname = filename;
-    final File file = new File(myDir, fname);
-    if (file.exists()) {
-      file.delete();
-    }
-    try {
-      final FileOutputStream out = new FileOutputStream(file);
-      bitmap.compress(Bitmap.CompressFormat.PNG, 99, out);
-      out.flush();
-      out.close();
-    } catch (final Exception e) {
-      Log.e(TAG,"Exception!", e);
-    }
-  }
   /** Compares two {@code Size}s based on their areas. */
   private static class CompareSizesByArea implements Comparator<Size> {
 
