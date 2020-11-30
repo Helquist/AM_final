@@ -216,9 +216,7 @@ public class Camera2BasicFragment extends Fragment
                     @NonNull TotalCaptureResult result) {}
           };
   private FaceDetector faceDetector;
-  //private OverlayView trackingOverlay;
   private static final float TEXT_SIZE_DIP = 10;
-  private BorderedText borderedText;
   private SparseArray<Face> faces = null;
   private Integer sensorOrientation;
 
@@ -353,12 +351,6 @@ public class Camera2BasicFragment extends Fragment
             .build();
 
     faceDetector.isOperational();
-
-    final float textSizePx =
-            TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
-    borderedText.setTypeface(Typeface.MONOSPACE);
   }
 
   /** Load the model and labels. */
