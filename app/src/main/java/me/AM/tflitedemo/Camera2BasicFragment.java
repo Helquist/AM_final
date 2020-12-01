@@ -736,7 +736,7 @@ public class Camera2BasicFragment extends Fragment
 
       //  Be sure that there is at least 1px to slice.
       assert(rect.left < rect.right && rect.top < rect.bottom);
-      //  Create our resulting image (150--50),(75--25) = 200x100px
+      //  Create our resulting image
       Bitmap resultBmp = Bitmap.createBitmap(rect.right-rect.left, rect.bottom-rect.top, Bitmap.Config.ARGB_8888);
       //  draw source bitmap into resulting image at given position:
       new Canvas(resultBmp).drawBitmap(bitmap, -rect.left, -rect.top, null);
