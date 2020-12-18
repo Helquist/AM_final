@@ -33,7 +33,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.graphics.Typeface;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -45,18 +44,18 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -69,8 +68,6 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -216,7 +213,6 @@ public class Camera2BasicFragment extends Fragment
                     @NonNull TotalCaptureResult result) {}
           };
   private FaceDetector faceDetector;
-  private static final float TEXT_SIZE_DIP = 10;
   private SparseArray<Face> faces = null;
   private Integer sensorOrientation;
 
@@ -225,14 +221,14 @@ public class Camera2BasicFragment extends Fragment
    *
    * @param text The message to show
    */
-  private void showToast(String s) {
+  private void showText(String s) {
     SpannableStringBuilder builder = new SpannableStringBuilder();
     SpannableString str1 = new SpannableString(s);
     builder.append(str1);
-    showToast(builder);
+    showText(builder);
   }
 
-  private void showToast(SpannableStringBuilder builder) {
+  private void showText(SpannableStringBuilder builder) {
     final Activity activity = getActivity();
     if (activity != null) {
       activity.runOnUiThread(
@@ -673,7 +669,7 @@ public class Camera2BasicFragment extends Fragment
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                  showToast("Failed");
+                  showText("Failed");
                 }
               },
               null);
@@ -726,6 +722,7 @@ public class Camera2BasicFragment extends Fragment
     Log.i(TAG, "size "+ previewSize.getHeight() + " " + previewSize.getWidth());
 
     Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+    long startTime = SystemClock.uptimeMillis();
     faces = faceDetector.detect(frame);
 
     for (int i = 0; i < faces.size(); ++i) {
@@ -748,11 +745,17 @@ public class Camera2BasicFragment extends Fragment
       Log.i(TAG, "faceid "+face.getPosition().x);
       Log.i(TAG, "faceid "+face.getPosition().y);
     }
+    long endTime = SystemClock.uptimeMillis();
+    long duration = endTime - startTime;
+    long fps = 1000 / duration;
+    SpannableString span = new SpannableString(duration + " ms" +"(" + fps + " fps)");
+    span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
+    textToShow.append(span);
 
     Log.i(TAG, "facelen "+ faces.size());
 
     bitmap.recycle();
-    showToast(textToShow);
+    showText(textToShow);
   }
 
   /** Compares two {@code Size}s based on their areas. */

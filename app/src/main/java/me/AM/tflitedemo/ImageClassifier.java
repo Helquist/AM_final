@@ -122,20 +122,20 @@ public abstract class ImageClassifier {
     }
     convertBitmapToByteBuffer(bitmap);
     // Here's where the magic happens!!!
-    long startTime = SystemClock.uptimeMillis();
+    //long startTime = SystemClock.uptimeMillis();
     runInference();
-    long endTime = SystemClock.uptimeMillis();
-    Log.d(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
+    //long endTime = SystemClock.uptimeMillis();
+    //Log.d(TAG, "Timecost to run model inference: " + Long.toString(endTime - startTime));
 
     // Smooth the results across frames.
     applyFilter();
 
     // Print the results.
     printTopKLabels(builder);
-    long duration = endTime - startTime;
-    SpannableString span = new SpannableString(duration + " ms");
-    span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
-    builder.append(span);
+    //long duration = endTime - startTime;
+    //SpannableString span = new SpannableString(duration + " ms");
+    //span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
+    //builder.append(span);
   }
 
   void applyFilter() {
