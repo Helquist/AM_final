@@ -23,7 +23,16 @@
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -36,13 +45,7 @@
         android:orientation="vertical"
         android:weightSum="100">
 
-        <ImageView
-            android:id="@+id/logoview2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="30"
-            android:scaleType="fitStart"
-            android:src="@drawable/logo" />
+
 
         <TextView
             android:id="@+id/text"
