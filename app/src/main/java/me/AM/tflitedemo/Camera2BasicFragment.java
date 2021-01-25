@@ -27,9 +27,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -315,9 +317,6 @@ public class Camera2BasicFragment extends Fragment
     LinearLayout surface = (LinearLayout)view.findViewById(R.id.surface);
     this.overlayTextureView = new OverlayTextureView(this.getContext());
     surface.addView(overlayTextureView);
-
-    overlayTextureView.xx = 500;
-    overlayTextureView.yy = 500;
 
     return view;
   }
@@ -736,15 +735,20 @@ public class Camera2BasicFragment extends Fragment
     Frame frame = new Frame.Builder().setBitmap(bitmap).build();
     long startTime = SystemClock.uptimeMillis();
     faces = faceDetector.detect(frame);
+    overlayTextureView.labels.clear();
+    overlayTextureView.faces.clear();
 
     for (int i = 0; i < faces.size(); ++i) {
       Face face = faces.valueAt(i);
-
+      String tmpLabel;
       Rect rect = new Rect(Math.round(face.getPosition().x), Math.round(face.getPosition().y),
               Math.round(face.getWidth() + face.getPosition().x), Math.round(face.getPosition().y + face.getHeight()));
+      Rect rectToDraw = new Rect(Math.round((face.getPosition().x)*8), Math.round((face.getPosition().y)*8),
+              Math.round((face.getWidth() + face.getPosition().x)*8), Math.round((face.getPosition().y + face.getHeight())*8));
 
       //  Be sure that there is at least 1px to slice.
       assert(rect.left < rect.right && rect.top < rect.bottom);
+      overlayTextureView.faces.add(i, rectToDraw);
       //  Create our resulting image
       Bitmap resultBmp = Bitmap.createBitmap(rect.right-rect.left, rect.bottom-rect.top, Bitmap.Config.ARGB_8888);
       //  draw source bitmap into resulting image at given position:
@@ -752,22 +756,23 @@ public class Camera2BasicFragment extends Fragment
 
       Bitmap resized = Bitmap.createScaledBitmap(resultBmp, 48, 48, true);
 
-      classifier.classifyFrame(resized, textToShow);
-
+      tmpLabel = classifier.classifyFrame(resized, textToShow);
+      overlayTextureView.labels.add(i, tmpLabel);
       Log.i(TAG, "faceid "+face.getPosition().x);
       Log.i(TAG, "faceid "+face.getPosition().y);
     }
+    overlayTextureView.draw(overlayTextureView.canvas);
     long endTime = SystemClock.uptimeMillis();
     long duration = endTime - startTime;
     long fps = 1000 / duration;
-    SpannableString span = new SpannableString(duration + " ms" +"(" + fps + " fps)");
+    SpannableStringBuilder span = new SpannableStringBuilder("      " +duration + " ms" +"(" + fps + " fps)");
     span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
     textToShow.append(span);
 
     Log.i(TAG, "facelen "+ faces.size());
 
     bitmap.recycle();
-    showText(textToShow);
+    showText(span);
   }
 
   /** Compares two {@code Size}s based on their areas. */

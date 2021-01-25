@@ -53,7 +53,7 @@ public abstract class ImageClassifier {
   private static final String TAG = "TfLiteDemo";
 
   /** Number of results to show in the UI. */
-  private static final int RESULTS_TO_SHOW = 3;
+  private static final int RESULTS_TO_SHOW = 1;
 
   /** Dimensions of inputs. */
   private static final int DIM_BATCH_SIZE = 1;
@@ -115,7 +115,7 @@ public abstract class ImageClassifier {
   }
 
   /** Classifies a frame from the preview stream. */
-  void classifyFrame(Bitmap bitmap, SpannableStringBuilder builder) {
+  String classifyFrame(Bitmap bitmap, SpannableStringBuilder builder) {
     if (tflite == null) {
       Log.e(TAG, "Image classifier has not been initialized; Skipped.");
       builder.append(new SpannableString("Uninitialized Classifier."));
@@ -132,6 +132,10 @@ public abstract class ImageClassifier {
 
     // Print the results.
     printTopKLabels(builder);
+    SpannableStringBuilder ssb = new SpannableStringBuilder();
+    printTopKLabels(ssb);
+    String result = ssb.toString();
+    return result;
     //long duration = endTime - startTime;
     //SpannableString span = new SpannableString(duration + " ms");
     //span.setSpan(new ForegroundColorSpan(android.graphics.Color.LTGRAY), 0, span.length(), 0);
